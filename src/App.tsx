@@ -1,22 +1,28 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import "./App.css";
 
 const URLS_LOCAL_STORAGE_KEY = "urls";
-const URLS_LOCAL_STORAGE_KEY_DELIMITER = "\n"
+const URLS_LOCAL_STORAGE_KEY_DELIMITER = "\n";
+
+const STOCKS_EXAMPLE_COMMA = "PINS, TSLA"
+const STOCKS_EXAMPLE_NEWLINE = "PINS\nTSLA"
+const URL_EXAMPLE_NEWLINE = "https://stockrow.com/${symbol}\nhttps://www.wsj.com/market-data/quotes/${symbol}"
 
 const detectSplitDelimeter = (input: string) => {
   if (input.includes("\n")) {
-    return "\n"
+    return "\n";
   } else if (input.includes(", ")) {
-    return ", "
+    return ", ";
   } else {
-    return ","
+    return ",";
   }
-}
+};
 
 function App() {
   const [symbolsText, setSymbolsText] = useState("");
   const [urlsText, setUrlsText] = useState("");
+  const [, updateState] = useState<object>();
+  const forceUpdate = useCallback(() => updateState({}), []);
 
   const savedUrlTextFromStorage = (JSON.parse(
     localStorage.getItem(URLS_LOCAL_STORAGE_KEY) || "[]"
@@ -24,13 +30,12 @@ function App() {
   const [savedUrlsText, setSavedUrlsText] = useState(savedUrlTextFromStorage);
 
   const openUrls = () => {
-    const symbols = symbolsText.split(detectSplitDelimeter(symbolsText))
-    console.log(symbols)
-    const urls = urlsText.split(detectSplitDelimeter(urlsText))
-    for(const url of urls) {
-      for(const symbol of symbols) {
-        const targetUrl = url.replace("${symbol}", symbol)
-        window.open(targetUrl, '_blank');
+    const symbols = symbolsText.split(detectSplitDelimeter(symbolsText)).map(v => v.trim());
+    const urls = urlsText.split(detectSplitDelimeter(urlsText)).map(v => v.trim());
+    for (const url of urls) {
+      for (const symbol of symbols) {
+        const targetUrl = url.replace("${symbol}", symbol);
+        window.open(targetUrl, "_blank");
       }
     }
   };
@@ -38,14 +43,19 @@ function App() {
   const saveForLater = () => {
     localStorage.setItem(
       URLS_LOCAL_STORAGE_KEY,
-      JSON.stringify(savedUrlsText.split(URLS_LOCAL_STORAGE_KEY_DELIMITER).map(v => v.trim()) || [])
+      JSON.stringify(
+        savedUrlsText
+          .split(URLS_LOCAL_STORAGE_KEY_DELIMITER)
+          .map((v) => v.trim()) || []
+      )
     );
+    forceUpdate()
   };
 
   return (
     <div className="App">
       <div style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
-        <div style={{marginRight: 20}}>
+        <div className="mr20">
           <p>Symbols</p>
           <textarea
             style={{ minWidth: 200, resize: "vertical" }}
@@ -53,8 +63,9 @@ function App() {
             onChange={({ target: { value } }) => setSymbolsText(value)}
             rows={10}
           ></textarea>
+          <div className="example" onClick={() => setSymbolsText(STOCKS_EXAMPLE_NEWLINE)}>Example</div>
         </div>
-        <div style={{marginRight: 20}}>
+        <div className="mr20">
           <p>Urls</p>
           <textarea
             style={{ minWidth: 400, resize: "vertical" }}
@@ -62,10 +73,14 @@ function App() {
             onChange={({ target: { value } }) => setUrlsText(value)}
             rows={10}
           ></textarea>
+          <div className="example" onClick={() => setUrlsText(URL_EXAMPLE_NEWLINE)}>Example</div>
         </div>
-        <div style={{display: "flex", alignContent: "center"}} className="openUrlsButton">
+        <div
+          style={{ display: "flex", alignContent: "center" }}
+          className="openUrlsButton"
+        >
           <button style={{ height: 30 }} onClick={openUrls}>
-            Open Urls
+            Open Tabs
           </button>
         </div>
       </div>
@@ -76,7 +91,10 @@ function App() {
           onChange={({ target: { value } }) => setSavedUrlsText(value)}
           rows={10}
         ></textarea>
-        <button style={{ height: 30, marginTop: 20 }} onClick={saveForLater}>
+        <div className="example" onClick={() => setUrlsText(URL_EXAMPLE_NEWLINE)}>Example</div>
+        <button
+          disabled={savedUrlTextFromStorage === savedUrlsText}
+          style={{ height: 30, marginTop: 20 }} onClick={saveForLater}>
           Save for later
         </button>
       </div>
