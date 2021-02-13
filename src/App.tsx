@@ -4,9 +4,14 @@ import "./App.css";
 const URLS_LOCAL_STORAGE_KEY = "urls";
 const URLS_LOCAL_STORAGE_KEY_DELIMITER = "\n";
 
-const STOCKS_EXAMPLE_COMMA = "PINS, TSLA"
 const STOCKS_EXAMPLE_NEWLINE = "PINS\nTSLA"
 const URL_EXAMPLE_NEWLINE = "https://stockrow.com/${symbol}\nhttps://www.wsj.com/market-data/quotes/${symbol}"
+const URL_STORE_EXAMPLE_NEWLINE = `https://stockrow.com/\${symbol}
+https://www.wsj.com/market-data/quotes/\${symbol}
+https://finance.yahoo.com/quote/\${symbol}/analysis?p=\${symbol}
+https://www.earningswhispers.com/stocks/\${symbol}
+https://fintel.io/ss/us/\${symbol}
+`
 
 const detectSplitDelimeter = (input: string) => {
   if (input.includes("\n")) {
@@ -91,7 +96,7 @@ function App() {
           onChange={({ target: { value } }) => setSavedUrlsText(value)}
           rows={10}
         ></textarea>
-        <div className="example" onClick={() => setUrlsText(URL_EXAMPLE_NEWLINE)}>Example</div>
+        <div className="example" onClick={() => setSavedUrlsText(URL_STORE_EXAMPLE_NEWLINE)}>Example</div>
         <button
           disabled={savedUrlTextFromStorage === savedUrlsText}
           style={{ height: 30, marginTop: 20 }} onClick={saveForLater}>
