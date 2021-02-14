@@ -4,17 +4,20 @@ import "./App.css";
 const URLS_LOCAL_STORAGE_KEY = "urls";
 const URLS_LOCAL_STORAGE_KEY_DELIMITER = "\n";
 
-const STOCKS_EXAMPLE_NEWLINE = "PINS\nTSLA"
-const URL_EXAMPLE_NEWLINE = "https://stockrow.com/${symbol}\nhttps://www.wsj.com/market-data/quotes/${symbol}"
+const STOCKS_EXAMPLE_NEWLINE = "PINS\nTSLA";
+const URL_EXAMPLE_NEWLINE =
+  "https://stockrow.com/${symbol}\nhttps://www.wsj.com/market-data/quotes/${symbol}";
 const URL_STORE_EXAMPLE_NEWLINE = `https://stockrow.com/\${symbol}
 https://www.wsj.com/market-data/quotes/\${symbol}
 https://finance.yahoo.com/quote/\${symbol}/analysis?p=\${symbol}
 https://www.earningswhispers.com/stocks/\${symbol}
 https://fintel.io/ss/us/\${symbol}
-`
+`;
 
 const detectSplitDelimeter = (input: string) => {
-  if (input.includes("\n")) {
+  if (input.includes(" ")) {
+    return " ";
+  } else if (input.includes("\n")) {
     return "\n";
   } else if (input.includes(", ")) {
     return ", ";
@@ -34,11 +37,19 @@ function App() {
   ) as Array<string>).join(URLS_LOCAL_STORAGE_KEY_DELIMITER);
   const [savedUrlsText, setSavedUrlsText] = useState(savedUrlTextFromStorage);
 
+  const symbolsList = symbolsText
+    .split(detectSplitDelimeter(symbolsText))
+    .filter((v) => v)
+    .map((v) => v.trim());
+
+  const urlsList = urlsText
+    .split(detectSplitDelimeter(urlsText))
+    .filter((v) => v)
+    .map((v) => v.trim());
+
   const openUrls = () => {
-    const symbols = symbolsText.split(detectSplitDelimeter(symbolsText)).map(v => v.trim());
-    const urls = urlsText.split(detectSplitDelimeter(urlsText)).map(v => v.trim());
-    for (const url of urls) {
-      for (const symbol of symbols) {
+    for (const url of urlsList) {
+      for (const symbol of symbolsList) {
         const targetUrl = url.replace("${symbol}", symbol);
         window.open(targetUrl, "_blank");
       }
@@ -54,37 +65,53 @@ function App() {
           .map((v) => v.trim()) || []
       )
     );
-    forceUpdate()
+    forceUpdate();
   };
 
   return (
     <div className="App">
-      <div style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
-        <div className="mr20">
+      <div style={{ display: "flex", marginBottom: 20, alignItems: "top" }}>
+        <div className="mr20" style={{ width: 300 }}>
           <p>Symbols</p>
           <textarea
-            style={{ minWidth: 200, resize: "vertical" }}
+            style={{ resize: "vertical", width: "100%" }}
             value={symbolsText}
             onChange={({ target: { value } }) => setSymbolsText(value)}
             rows={10}
           ></textarea>
-          <div className="example" onClick={() => setSymbolsText(STOCKS_EXAMPLE_NEWLINE)}>Example</div>
+          {symbolsList.length >= 1 && (
+            <div>Parsed: {symbolsList.join(", ")}</div>
+          )}
+          <div
+            className="example"
+            onClick={() => setSymbolsText(STOCKS_EXAMPLE_NEWLINE)}
+          >
+            Example
+          </div>
         </div>
-        <div className="mr20">
+        <div className="mr20" style={{ width: 400 }}>
           <p>Urls</p>
           <textarea
-            style={{ minWidth: 400, resize: "vertical" }}
+            style={{ width: "100%", resize: "vertical" }}
             value={urlsText}
             onChange={({ target: { value } }) => setUrlsText(value)}
             rows={10}
           ></textarea>
-          <div className="example" onClick={() => setUrlsText(URL_EXAMPLE_NEWLINE)}>Example</div>
+          <div
+            className="example"
+            onClick={() => setUrlsText(URL_EXAMPLE_NEWLINE)}
+          >
+            Example
+          </div>
         </div>
         <div
           style={{ display: "flex", alignContent: "center" }}
           className="openUrlsButton"
         >
-          <button style={{ height: 30 }} onClick={openUrls}>
+          <button
+            style={{ height: 30, marginTop: 50, backgroundColor: "lightblue" }}
+            onClick={openUrls}
+          >
             Open Tabs
           </button>
         </div>
@@ -96,10 +123,17 @@ function App() {
           onChange={({ target: { value } }) => setSavedUrlsText(value)}
           rows={10}
         ></textarea>
-        <div className="example" onClick={() => setSavedUrlsText(URL_STORE_EXAMPLE_NEWLINE)}>Example</div>
+        <div
+          className="example"
+          onClick={() => setSavedUrlsText(URL_STORE_EXAMPLE_NEWLINE)}
+        >
+          Example
+        </div>
         <button
           disabled={savedUrlTextFromStorage === savedUrlsText}
-          style={{ height: 30, marginTop: 20 }} onClick={saveForLater}>
+          style={{ height: 30, marginTop: 20 }}
+          onClick={saveForLater}
+        >
           Save for later
         </button>
       </div>
