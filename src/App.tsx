@@ -47,7 +47,16 @@ function App() {
     .filter((v) => v)
     .map((v) => v.trim());
 
-  const openUrls = () => {
+  const openTabsByTicker = () => {
+    for (const symbol of symbolsList) {
+      for (const url of urlsList) {
+        const targetUrl = url.replace("${symbol}", symbol);
+        window.open(targetUrl, "_blank");
+      }
+    }
+  };
+
+  const openTabsByUrl = () => {
     for (const url of urlsList) {
       for (const symbol of symbolsList) {
         const targetUrl = url.replace("${symbol}", symbol);
@@ -105,14 +114,20 @@ function App() {
           </div>
         </div>
         <div
-          style={{ display: "flex", alignContent: "center" }}
+          style={{ display: "flex", alignContent: "center", flexDirection: "column" }}
           className="openUrlsButton"
         >
           <button
             style={{ height: 30, marginTop: 50, backgroundColor: "lightblue" }}
-            onClick={openUrls}
+            onClick={openTabsByTicker}
           >
-            Open Tabs
+            Open Tabs (by ticker)
+          </button>
+          <button
+            style={{ height: 30, marginTop: 50, backgroundColor: "lightblue" }}
+            onClick={openTabsByUrl}
+          >
+            Open Tabs (by url)
           </button>
         </div>
       </div>
