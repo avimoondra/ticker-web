@@ -7,11 +7,20 @@ const URLS_LOCAL_STORAGE_KEY_DELIMITER = "\n";
 const STOCKS_EXAMPLE_NEWLINE = "PINS\nTSLA";
 const URL_EXAMPLE_NEWLINE =
   "https://stockrow.com/${symbol}\nhttps://www.wsj.com/market-data/quotes/${symbol}";
-const URL_STORE_EXAMPLE_NEWLINE = `https://stockrow.com/\${symbol}
-https://www.wsj.com/market-data/quotes/\${symbol}
-https://finance.yahoo.com/quote/\${symbol}/analysis?p=\${symbol}
-https://www.earningswhispers.com/stocks/\${symbol}
-https://fintel.io/ss/us/\${symbol}
+const URL_STORE_EXAMPLE_NEWLINE = `https://stockrow.com/${symbol}
+https://finviz.com/quote.ashx?ty=c&ta=1&p=d&t=${symbol}
+https://research.investors.com/ibdchartsenlarged.aspx?cht=pvc&type=DAILY&symbol=${symbol}
+https://stockcharts.com/h-sc/ui?p=D&b=5&g=0&id=p12016846985&s=${symbol}
+https://www.wsj.com/market-data/quotes/${symbol}
+https://finance.yahoo.com/quote/${symbol}/analysis?p=${symbol}
+https://www.earningswhispers.com/stocks/${symbol}
+https://www.estimize.com/${symbol}/fq1-2021?metric_name=revenue&chart=historical
+https://stockcharts.com/freecharts/gallery.html?${symbol}
+https://fintel.io/ss/us/${symbol}
+https://finviz.com/quote.ashx?t=${symbol}
+https://www.nakedshortreport.com/company/${symbol}
+https://shortvolume.com/?t=${symbol}
+http://maximum-pain.com/options/${symbol}
 `;
 
 const detectSplitDelimeter = (input: string) => {
